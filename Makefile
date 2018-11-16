@@ -1,4 +1,4 @@
-.PHONY: clean upload all libs coq-tools jscoq32 jscoq64 dist dist-upload dist-release dist-hott force coq coq-get coq-build
+.PHONY: clean upload all libs coq-tools jscoq32 jscoq64 dist dist-upload dist-release dist-hott force coq coq-get coq-build dune-build
 
 include config.mk
 
@@ -25,7 +25,7 @@ coq-tools:
 
 # XXX FIXME
 # Compile all cmo/cma in coq-pkgs
-plugin-list: force
+plugin-list: coq-pkgs force
 	find coq-pkgs \( -name *.cma -or -name *.cmo \) -fprintf plugin-list "%p.js:\n"
 
 # | cmp -s - $@ || tee plugin-list
@@ -169,3 +169,8 @@ coq-build:
 	make -f coq-addons/dsp.addon jscoq-install
 
 coq: coq-get coq-build
+
+_build/default/coq-js/jscoq_worker.js: force
+	OCAMLPATH=$(COQDIR) dune build --profile=release coq-js/jscoq_worker.bc.js
+
+dune-build: _build/default/coq-js/jscoq_worker.js
