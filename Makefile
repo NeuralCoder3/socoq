@@ -142,6 +142,7 @@ coq-get:
 #	make -f coq-addons/elpi.addon get
 #	make -f coq-addons/dsp.addon get
 
+COQ_TARGETS = theories plugins bin/coqc bin/coqtop bin/coq_makefile
 COQ_MAKE_FLAGS = -j $(NJOBS)
 
 ifeq "${shell uname -s}" "Darwin"
@@ -152,7 +153,7 @@ endif
 
 
 coq-build:
-	cd coq-external/coq-$(COQ_VERSION)+32bit && make $(COQ_MAKE_FLAGS) && $(MAKE) byte $(COQ_MAKE_FLAGS)
+	cd coq-external/coq-$(COQ_VERSION)+32bit && $(MAKE) $(COQ_TARGETS) $(COQ_MAKE_FLAGS) && $(MAKE) byte $(COQ_MAKE_FLAGS)
 	make -f coq-addons/mathcomp.addon build jscoq-install
 #	make -f coq-addons/iris.addon build jscoq-install
 #	make -f coq-addons/equations.addon build jscoq-install
