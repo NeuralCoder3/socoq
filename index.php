@@ -75,13 +75,9 @@ foreach ($files as $f) {
             </td>
           </tr>
           <tr>
-            <td>Key-Map:</td>
+            <td>Vim-Mode:</td>
             <td>
-              <select id="keyboardselection">
-                <option value="sublime">sublime</option>
-                <option value="emacs">emacs</option>
-                <option value="vim">vim</option>
-              </select>
+              <input type="checkbox" id="vim-mode">
             </td>
           </tr>
           <tr>
@@ -202,6 +198,10 @@ Qed.<?php
         localStorage.setItem('coq-useAutocomplete', $(this).prop("checked"));
         useAutoComplete=$(this).prop("checked");
       });
+      $("#vim-mode").change(function(){
+        localStorage.setItem('coq-vim-mode', $(this).prop("checked"));
+        editor.setOption("vimMode", $(this).prop("checked"));
+      });
         $("#snippet").change(function(){
           localStorage.setItem('coq-useSnippet', $(this).prop("checked"));
           useSnippets=$(this).prop("checked");
@@ -210,10 +210,6 @@ Qed.<?php
         localStorage.setItem('coq-theme', $(this).val());
         editor.setOption("theme", $(this).val());
       });
-    $("#keyboardselection").change(function(){
-      localStorage.setItem('coq-keyboard', $(this).val());
-      editor.setOption("keyMap", $(this).val());
-    });
       $("#username").change(function(){
         username=$(this).val();
         localStorage.setItem('coq-username', username);
@@ -369,11 +365,6 @@ Qed.<?php
           theme="ambiance";
         $("#themeselection").val(theme);
         editor.setOption("theme", theme);
-        var keyboard=localStorage.getItem('coq-keyboard');
-        if(keyboard === null)
-          keyboard="sublime";
-        $("#keyboardselection").val(keyboard);
-        editor.setOption("keyMap", keyboard);
         username=localStorage.getItem('coq-username');
         if(username === null)
           username="";
@@ -384,10 +375,13 @@ Qed.<?php
         $("#file").val(filename);
 
         useAutoComplete=localStorage.getItem('coq-useAutocomplete')=="true";
+        var vimMode=localStorage.getItem('coq-vim-mode')=="true";
+        editor.setOption("vimMode", vimMode);
         useSnippets=localStorage.getItem('coq-useSnippet')=="true";
 
         $("#snippet").prop("checked", useSnippets);
         $("#autocomplete").prop("checked", useAutoComplete);
+        $("#vim-mode").prop("checked", vimMode);
 
       });
       function save_coq_snippets(){
