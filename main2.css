@@ -1,0 +1,75 @@
+
+  .rcorners1 {
+    border-radius: 25px;
+  }
+  .rcorners2 {
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+  }
+  footer {
+    position:fixed;
+    bottom:0;
+    left:0;
+    height:25px;
+    width: 100%;
+    background: lightgray;
+    padding-top: 5px;
+    padding-left: 5px;
+    z-index: 10;
+  }
+  div.spoiler-forum {
+    background: none repeat scroll 0 0 #EEEEEE;
+    border: 1px solid #DDDDDD;
+    border-radius: 5px 5px 5px 5px;
+    padding: 5px 8px;
+  }
+  div.spoiler-hidden a.spoiler-toggle {
+    background-position: 0 -16px;
+  }
+  a.spoiler-toggle {
+    color: #000000;
+    padding-left: 13px;
+  }
+  div.spoiler-hidden .spoiler-text {
+    display: none;
+  }
+  div.spoiler-text {
+    padding: 5px 0;
+  }
+  .CodeMirror-scroll{
+    /* min-height: 500px; */
+    min-height: 850px;
+    max-height: 850px;
+  }
+
+#document {
+  width: 100% !important;
+}
+
+.headpanel {
+    background-color: gray;
+    border: 1px solid black;
+    padding-left:25px;
+    padding-right:20px;
+}
+.headpanel button {
+    background-color: lightgray;
+    border-radius: 7px;
+}
+
+dialog {
+    z-index: 100;
+    height:80%;
+    width:50%;
+}
+dialog form {
+    height:100%;
+}
+dialog form div {
+    overflow-y:scroll;
+    height:95%;
+}
+
+#file {
+    background-color: lightgray;
+}

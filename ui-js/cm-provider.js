@@ -13,21 +13,171 @@ class CmSentence {
 
 }
 
-// A CodeMirror-based Provider of coq statements.
+var edit;
+var useSnippets=false;
+var useAutoComplete=false;
+
 class CmCoqProvider {
 
     constructor(element) {
 
+            var words = [
+              'Abort', 'About', 'Add', 'All', 'Arguments', 'Asymmetric', 'Axiom',
+              'Bind',
+              'Canonical', 'Check', 'Class', 'Close', 'Coercion', 'CoFixpoint', 'Comments',
+              'CoInductive', 'Context', 'Constructors', 'Contextual', 'Corollary',
+              'Defined', 'Definition', 'Delimit',
+              'Fail',
+              'Eval',
+              'End', 'Example', 'Export',
+              'Fact', 'Fixpoint', 'From',
+              'Global', 'Goal', 'Graph',
+              'Hint', 'Hypotheses', 'Hypothesis',
+              'Implicit', 'Implicits', 'Import', 'Inductive', 'Infix', 'Instance',
+              'Lemma', 'Let', 'Local', 'Ltac',
+              'Module', 'Morphism',
+              'Next', 'Notation',
+              'Obligation', 'Open',
+              'Parameter', 'Parameters', 'Prenex', 'Print', 'Printing', 'Program',
+              'Patterns', 'Projections', 'Proof',
+              'Proposition',
+              'Qed',
+              'Record', 'Relation', 'Remark', 'Require', 'Reserved', 'Resolve', 'Rewrite',
+              'Save', 'Scope', 'Search', 'SearchAbout', 'Section', 'Set', 'Show', 'Strict', 'Structure',
+              'Tactic', 'Time', 'Theorem', 'Types',
+              'Unset',
+              'Variable', 'Variables', 'View'
+            ,
+              'as',
+              'at',
+              'cofix', 'crush',
+              'else', 'end',
+              'False', 'fix', 'for', 'forall', 'fun',
+              'if', 'in', 'is',
+              'let',
+              'match',
+              'of',
+              'Prop',
+              'return',
+              'struct',
+              'then', 'True', 'Type',
+              'when', 'with'
+            ,
+              'after', 'apply', 'assert', 'auto', 'autorewrite',
+              'case', 'change', 'clear', 'compute', 'congruence', 'constructor',
+              'congr', 'cut', 'cutrewrite',
+              'dependent', 'destruct',
+              'eapply', 'eassumption', 'eauto', 'econstructor', 'elim', 'exists',
+              'field', 'firstorder', 'fold', 'fourier',
+              'generalize',
+              'have', 'hnf',
+              'induction', 'injection', 'instantiate', 'intro', 'intros', 'inversion',
+              'left',
+              'move',
+              'pattern', 'pose',
+              'refine', 'remember', 'rename', 'replace', 'revert', 'rewrite',
+              'right', 'ring',
+              'set', 'simpl', 'specialize', 'split', 'subst', 'suff', 'symmetry',
+              'transitivity', 'trivial',
+              'unfold', 'unlock', 'using',
+              'vm_compute',
+              'where', 'wlog'
+            ,
+              'assumption',
+              'by',
+              'contradiction',
+              'discriminate',
+              'exact',
+              'now',
+              'omega',
+              'reflexivity',
+              'tauto'
+            ,
+              'admit',
+              'Admitted'
+            ];
+
+
+  function hints(cm, option) {
+    return new Promise(function(accept) {
+      setTimeout(function() {
+          if (!useAutoComplete) {
+              return accept(null);
+          }
+        var cursor = cm.getCursor(), line = cm.getLine(cursor.line)
+        var start = cursor.ch, end = cursor.ch
+        while (start && /\w/.test(line.charAt(start - 1))) --start
+        while (end < line.length && /\w/.test(line.charAt(end))) ++end
+        var word = line.slice(start, end);
+        var wordlist=[];
+        for (var i = 0; i < words.length; i++) {
+            if (words[i].startsWith(word)) {
+                wordlist.push(words[i]);
+            }
+        }
+        if (wordlist.length>0) {
+            return accept({list: wordlist,
+                           from: CodeMirror.Pos(cursor.line, start),
+                           to: CodeMirror.Pos(cursor.line, end)})
+        }else{
+            return accept(null);
+        }
+      }, 100)
+    })
+  }
+
+
+  var snippets = [
+    { text: 'Goal True.\nProof.\nQed.', displayText: 'Proof' },
+    { text: 'match n with\n  | O => True\n  | S _ => False\nend.', displayText: 'match' },
+    { text: 'Fixpoint even n : Prop :=\nmatch n with\n  | O => True\n  | S O => False\n  | S (S m) => even m\nend.', displayText: 'Fixpoint' },
+    { text: 'Inductive NAME : Type :=\n| CONST1 : NAME\n| CONST2 : forall (n:nat), NAME.', displayText: 'Inductive' },
+];
+
+  function snippet() {
+      if (!useSnippets) {
+          return;
+      }
+    CodeMirror.showHint(edit, function () {
+      const cursor = edit.getCursor()
+      const token = edit.getTokenAt(cursor)
+      const start = token.start
+      const end = cursor.ch
+      const line = cursor.line
+      const currentWord = token.string
+
+      const list = snippets.filter(function (item) {
+        return item.text.indexOf(currentWord) >= 0
+      })
+
+      return {
+        list: list.length ? list : snippets,
+        from: CodeMirror.Pos(line, start),
+        to: CodeMirror.Pos(line, end)
+      }
+    }, { completeSingle: false })
+  }
+
         var cmOpts =
-            { mode : { name : "coq",
-                       version: 4,
-                       singleLineStringErrors : false
-                     },
+            {
+                mode : "coq",
+                // mode : { name : "coq",
+                //        version: 4,
+                //        singleLineStringErrors : false
+                //      },
               lineNumbers   : true,
-              indentUnit    : 4,
+              indentUnit    : 2,
               matchBrackets : true,
-              // theme         : 'blackboard',
-              keyMap        : "emacs"
+              extraKeys: {
+                        "Ctrl-Space": "autocomplete",
+                        "Ctrl-S": function() {snippet()},
+                        "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); }
+                      },
+    foldGutter: true,
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+              hintOptions: {hint: hints},
+               theme         : 'ambiance',
+               keyMap        : "sublime"
             };
 
         if (typeof element === 'string' || element instanceof String) {
@@ -35,6 +185,8 @@ class CmCoqProvider {
         } else {
             this.editor = CodeMirror(element, cmOpts);
         }
+
+        edit=this.editor;
 
         this.editor.on('change', evt => this.onCMChange(evt) );
         // From XQuery-CM
@@ -91,7 +243,7 @@ class CmCoqProvider {
         if (marks.length) {
             return marks[0].stm;
         } else {
-            return null;
+            return null
         }
         // } while(stm && (stm.end.line < cursor.line || stm.end.ch < cursor.ch));
     }

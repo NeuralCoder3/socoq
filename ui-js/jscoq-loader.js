@@ -19,7 +19,7 @@ var loadJs = function(js) {
             script.onload = resolve;
             document.head.appendChild(script);
         });
-    };
+    }
 };
 
 var loadJsCoq;
@@ -49,15 +49,32 @@ var loadJsCoq;
         loadCss(base_path + 'ui-css/coq-log');
         loadCss(base_path + 'ui-external/CodeMirror/lib/codemirror');
         loadCss(base_path + 'ui-external/CodeMirror/theme/blackboard');
-        loadCss(base_path + 'ui-external/CodeMirror/theme/blackboard');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/abcdef');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/ambiance');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/hopscotch');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/solarized');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/dracula');
+        loadCss(base_path + 'ui-external/CodeMirror/theme/monokai');
+        // loadCss(base_path + 'ui-external/CodeMirror/theme/paraiso-light');
         loadCss(base_path + 'ui-external/CodeMirror/addon/hint/show-hint');
         loadCss(base_path + 'ui-css/coq-base');
-        loadCss(base_path + 'ui-css/coq-light');
+        loadCss(base_path + 'ui-css/coq-lightdark');
 
         var files = ['ui-external/CodeMirror/lib/codemirror',
                      'ui-external/CodeMirror/mode/coq/coq',
+                     // 'ui-external/CodeMirror/mode/python/python',
                      'ui-external/CodeMirror/keymap/emacs',
+                     'ui-external/CodeMirror/keymap/vim',
+                     'ui-external/CodeMirror/keymap/sublime',
                      'ui-external/CodeMirror/addon/hint/show-hint',
+                     'ui-external/CodeMirror/addon/fold/foldcode',
+                     'ui-external/CodeMirror/addon/fold/foldgutter',
+                     'ui-external/CodeMirror/addon/fold/brace-fold',
+                     'ui-external/CodeMirror/addon/fold/indent-fold',
+                     // 'ui-external/CodeMirror/addon/fold/xml-fold',
+                     // 'ui-external/CodeMirror/addon/fold/markdown-fold',
+                     // 'ui-external/CodeMirror/addon/fold/coq-fold',
+                     'ui-external/CodeMirror/addon/fold/comment-fold',
                      'ui-external/CodeMirror-TeX-input/addon/hint/tex-input-hint',
                      'ui-external/d3.min',
                      'ui-js/cm-provider',
@@ -65,11 +82,12 @@ var loadJsCoq;
                      'ui-js/coq-layout-classic',
                      'ui-js/coq-manager'];
 
-        files = files.map(file => base_path + file);
+        var files = files.map(file => base_path + file);
 
         return files.reduce(function(prom, file) {
-            return prom.then(loadJs(file));
+            return prom.then(loadJs(file))
         }, Promise.resolve());
+
     };
 
 })();
