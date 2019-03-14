@@ -31,8 +31,9 @@ env:
 
 matrix:
   include:
-    - dist: xenial
     - os: osx
+      stage: prepare cache
+      script: true
       cache:
         ccache: true
         directories:
@@ -43,6 +44,18 @@ matrix:
       before_install: |
         set -e
         brew update
+        brew install ccache opam
+    - dist: xenial
+      stage: test
+    - os: osx
+      stage: test
+      cache:
+        ccache: true
+        directories:
+          - $HOME/.opam
+          - $HOME/Library/Caches/Homebrew
+      before_install: |
+        set -e
         brew install ccache opam
 
 before_install: |
@@ -59,12 +72,13 @@ install:
 - opam config var root
 - ./toolchain-setup.sh
 - opam list
-- make coq-get
-- make coq-build
 
 script:
+- make coq-get
+- make coq-build
 - echo 'Building JsCoq...' && echo -en 'travis_fold:start:jscoq.build\\r'
 - ./build.sh
 - git submodule update --remote
-- cd ui-external/CodeMirror && npm install
+- cd ui-external/CodeMirror
+- npm install
 - echo -en 'travis_fold:end:jscoq.build\\r'
