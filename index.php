@@ -184,6 +184,15 @@ Qed.<?php
 }
 ?>
             </textarea>
+            <?php
+            if(isset($_GET["url"])){
+                ?>
+                <script type="text/javascript">
+                var loadedURL=true;
+                </script>
+                <?php
+            }
+                 ?>
           </div>
         </div>
       </div>
@@ -357,7 +366,7 @@ Qed.<?php
         editor = $('.CodeMirror')[0].CodeMirror;
 
         var val=localStorage.getItem('coq-snippet');
-        if(val !== null)
+        if(val !== null && !loadedURL)
           editor.setValue(val);
         var theme=localStorage.getItem('coq-theme');
         console.log("Theme: "+theme);
