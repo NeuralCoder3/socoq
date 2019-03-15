@@ -182,17 +182,27 @@ Proof.
   exact I.
 Qed.<?php
 }
-?>
-            </textarea>
-            <?php
-            if(isset($_GET["url"])){
-                ?>
+?></textarea>
                 <script type="text/javascript">
-                var loadedURL=true;
+var loadedURL=<?php if(isset($_GET["url"])){echo "true";}else{echo "false";} ?>;
+var myNewURL = refineURL();
+window.history.pushState("object or string", "Title", "/" + myNewURL );
+function nthIndex(str, pat, n){
+    var L= str.length, i= -1;
+    while(n-- && i++<L){
+        i= str.indexOf(pat, i);
+        if (i < 0) break;
+    }
+    return i;
+}
+function refineURL()
+{
+    var currURL= window.location.href;
+    var afterDomain= currURL.substring(nthIndex(currURL,'/',3) + 1);
+    var beforeQueryString= afterDomain.split("?")[0];
+    return beforeQueryString;
+}
                 </script>
-                <?php
-            }
-                 ?>
           </div>
         </div>
       </div>
