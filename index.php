@@ -178,8 +178,8 @@ if(isset($_GET["url"])){
 
 Goal forall (n:nat), True.
 Proof.
-intros x.
-exact I.
+  intros x.
+  exact I.
 Qed.<?php
 }
 ?>
@@ -392,10 +392,10 @@ Qed.<?php
     </script>
     <footer>
       <a href="feedback.php" title="anonymous feedback">Marcel Ullrich</a> - Based on
-      <a href="https://github.com/ejgallego/jscoq">JsCoq
-      </a>
+      <a href="https://github.com/ejgallego/jscoq">JsCoq</a>
       <span id="info">
       </span>
+       - <a href="https://github.com/NeuralCoder3/socoq">Source Code</a>
     </footer>
   </body>
 </html>
