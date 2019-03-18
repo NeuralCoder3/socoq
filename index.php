@@ -7,14 +7,14 @@
     <title>SOCOQ</title>
     <link rel="stylesheet" href="main2.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <meta property="og:image" content="http://coq.bplaced.net/oct.png">
+    <meta property="og:image" content="http://coq.bplaced.net/oct256.png">
     <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1024">
-    <meta property="og:image:height" content="1024">
+    <meta property="og:image:width" content="256">
+    <meta property="og:image:height" content="256">
     <meta property="og:type" content="website" />
     <meta property="og:url" content="http://coq.bplaced.net/"/>
     <meta property="og:title" content="SOCOQ" />
-    <meta property="og:description" content="Online Proofing with Coq." />
+    <meta property="og:description" content="online proofs with coq." />
   </head>
   <body>
       <?php
