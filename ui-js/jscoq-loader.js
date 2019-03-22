@@ -57,6 +57,7 @@ var loadJsCoq;
         loadCss(base_path + 'ui-external/CodeMirror/theme/monokai');
         // loadCss(base_path + 'ui-external/CodeMirror/theme/paraiso-light');
         loadCss(base_path + 'ui-external/CodeMirror/addon/hint/show-hint');
+        loadCss(base_path + 'ui-external/CodeMirror/addon/dialog/dialog');
         loadCss(base_path + 'ui-css/coq-base');
         loadCss(base_path + 'ui-css/coq-lightdark');
 
@@ -71,6 +72,11 @@ var loadJsCoq;
                      'ui-external/CodeMirror/addon/fold/foldgutter',
                      'ui-external/CodeMirror/addon/fold/brace-fold',
                      'ui-external/CodeMirror/addon/fold/indent-fold',
+                     'ui-external/CodeMirror/addon/search/search',
+                     'ui-external/CodeMirror/addon/search/searchcursor',
+                     'ui-external/CodeMirror/addon/search/jump-to-line',
+                     'ui-external/CodeMirror/addon/search/match-highlighter',
+                     'ui-external/CodeMirror/addon/dialog/dialog',
                      // 'ui-external/CodeMirror/addon/fold/xml-fold',
                      // 'ui-external/CodeMirror/addon/fold/markdown-fold',
                      // 'ui-external/CodeMirror/addon/fold/coq-fold',

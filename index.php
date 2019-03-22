@@ -85,7 +85,7 @@ foreach ($files as $f) {
           <tr>
             <td>Vim-Mode:</td>
             <td>
-              <input type="checkbox" id="vim-mode">
+              <input type="checkbox" id="vim-mode" title="Input Box at the bottom">
             </td>
           </tr>
           <tr>
