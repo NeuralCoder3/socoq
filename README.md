@@ -18,6 +18,7 @@ Features:
  * Can run Coq Code
 
 Planned:
- * Chrome Error with <
  * Custom Snippets
  * Multicharacter Sub-Goal  (--, ++, **)
+ * Custom Theme
+ * Equations Support
