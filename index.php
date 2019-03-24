@@ -83,6 +83,22 @@ foreach ($files as $f) {
             </td>
           </tr>
           <tr>
+            <td colspan="2">
+             <input type="checkbox" id="customCB">Custom Theme
+             <div id="customTD">
+             <table>
+              <tr><td>builtin</td></tr>
+              <tr><td>keyword</td></tr>
+              <tr><td>variable</td></tr>
+              <tr><td>parenthesis</td></tr>
+              <tr><td>tactic</td></tr>
+              <tr><td>terminator</td></tr>
+              <tr><td>background</td></tr>
+             </table>
+             </div>
+            </td>
+          </tr>
+          <tr>
             <td>Vim-Mode:</td>
             <td>
               <input type="checkbox" id="vim-mode" title="Input Box at the bottom">
@@ -319,6 +335,7 @@ function refineURL()
     </script>
     <script type="text/javascript">
       var coq;
+      var useCustomCSS;
       var editor;
       loadJsCoq('./')
         .then(loadJs("./ui-external/CodeMirror/addon/runmode/runmode"))
@@ -410,12 +427,89 @@ function refineURL()
         $("#autocomplete").prop("checked", useAutoComplete);
         $("#vim-mode").prop("checked", vimMode);
 
+        useCustomCSS=localStorage.getItem('coq-customTheme')=="true";
+        $("#customCB").prop('checked', useCustomCSS);
+        initCss();
+        changeCCB();
       });
       function save_coq_snippets(){
         localStorage.setItem('coq-snippet', editor.getValue());
         localStorage.setItem('coq-filename', $("#file").val());
       }
       window.onbeforeunload = save_coq_snippets;
+      
+function changeCCB(){
+  if($("#customCB").prop('checked')){
+    $("#customTD").show();
+    setCSS();
+  } else {
+    $("#customTD").hide();  
+    if($("#customCSS").length)
+      $("#customCSS").remove();
+    editor.setOption("theme", "default");
+    editor.setOption("theme", $("#themeselection").val());
+  }
+}
+
+$("#customCB").change(function (){
+  changeCCB();
+  localStorage.setItem('coq-customTheme', $(this).prop("checked"));
+});
+function rgb2hex(rgb) {
+     if (  rgb.search("rgb") == -1 ) {
+          return rgb;
+     } else {
+          rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+          function hex(x) {
+               return ("0" + parseInt(x).toString(16)).slice(-2);
+          }
+          return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+     }
+}
+function setCSS(){
+    var str="<style id=\"customCSS\">\n";
+    $('#customTD tr').each(function(){
+      var item = $(this).children('td:nth-child(1)').html();
+      var c = '.cm-'+item;
+      var color = $(this).children('td:nth-child(2)').children('input').val();
+      var prop = 'color';
+      if(item == "background"){
+        c = ".cm-s-"+$("#themeselection").val()+".CodeMirror";
+        prop = "background-color";
+      }
+      str += c+"{"+prop+": "+color+"}\n";
+    });
+    str+="</style>";
+    if($("#customCSS").length)
+      $("#customCSS").remove();
+    $('head').append(str);
+}
+function initCss() {
+  $('#customTD tr').each(function(){
+    var c = $(this).children('td').html();
+    var className = "cm-"+c;
+    var prop = 'color';
+    if(c == "background"){
+      prop = "background-color";
+      className = "cm-s-"+$("#themeselection").val()+".CodeMirror";
+    }
+
+    var d = document.createElement('input');
+    d.type = "color";
+    var data = localStorage.getItem('coq-'+className);
+    if(data === null || !useCustomCSS)
+      data = rgb2hex($('.'+className).css(prop));
+    d.value = data;
+    $(d).change(function(){
+      console.log(className+" => "+$(this).val());
+      setCSS();
+      localStorage.setItem('coq-'+className,$(this).val());
+    });
+    var t = $("<td></td>").html(d);
+    $(this).append(t);
+  });
+  setCSS();
+}
     </script>
     <footer>
       <a href="feedback.php" title="anonymous feedback">Marcel Ullrich</a> - Based on

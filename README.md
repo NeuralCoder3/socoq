@@ -16,9 +16,11 @@ Features:
  * Autocompletion
  * Snippet Support
  * Can run Coq Code
+ * custom theme
 
 Planned:
  * Custom Snippets
  * Multicharacter Sub-Goal  (--, ++, **)
- * Custom Theme
  * Equations Support
+ * cleaner save load functions
+ * cleaner javascript
