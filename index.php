@@ -15,6 +15,15 @@
     <meta property="og:url" content="http://coq.bplaced.net/"/>
     <meta property="og:title" content="SOCOQ" />
     <meta property="og:description" content="online proofs with coq." />
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-137484762-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-137484762-1');
+</script>
   </head>
   <body>
       <?php
@@ -135,7 +144,7 @@ foreach ($files as $f) {
         <div id="document">
           <div class="spoiler-forum spoiler-hidden">
             <a class="spoiler-toggle" href="#">
-              <strong id="verstecken">Hinweise
+              <strong id="verstecken">Hints
               </strong>
             </a>
             <div class="spoiler-text" id="versteckt">
@@ -175,6 +184,19 @@ foreach ($files as $f) {
               <i class="fa fa-file-o">
               </i>Load
             </button>
+            <button onclick="download();">
+              <i class="fa fa-download">
+              </i>
+            </button>
+            <span class="file-upload">
+              <label for="upload">
+                <button onclick="$('#upload').click();">
+                  <i class="fa fa-upload">
+                  </i>
+                </button>
+              </label>
+              <input id="upload" type="file" onchange="loadfile(this)">
+            </span>
             <button onclick="share();">
               <i class="fa fa-link">
               </i>Share
@@ -268,6 +290,41 @@ function refineURL()
           );
         });
       });
+      function download() {
+        saveTextAsFile();
+      }
+      function saveTextAsFile() {
+        var textToWrite = editor.getValue();
+        var textFileAsBlob = new Blob([textToWrite], {
+          type: "text/plain;charset=utf-8"
+        });
+        var fileNameToSaveAs = document.getElementById("file").value + ".v";
+
+        var downloadLink = document.createElement("a");
+        downloadLink.download = fileNameToSaveAs;
+        downloadLink.innerHTML = "Download File";
+        if (window.webkitURL != null) {
+          // Chrome allows the link to be clicked
+          // without actually adding it to the DOM.
+          downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+        } else {
+          // Firefox requires the link to be added to the DOM
+          // before it can be clicked.
+          downloadLink.href = window.URL.createObjectURL(textFileAsBlob);
+          downloadLink.onclick = destroyClickedElement;
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+        }
+
+        downloadLink.click();
+      }
+      function loadfile(input) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          editor.setValue(e.target.result);
+        };
+        reader.readAsText(input.files[0]);
+      }
       function save() {
         $.post('save.php',
           {
@@ -406,7 +463,7 @@ function refineURL()
         var theme=localStorage.getItem('coq-theme');
         console.log("Theme: "+theme);
         if(theme === null)
-          theme="ambiance";
+          theme="default";
         $("#themeselection").val(theme);
         editor.setOption("theme", theme);
         username=localStorage.getItem('coq-username');
@@ -438,78 +495,77 @@ function refineURL()
       }
       window.onbeforeunload = save_coq_snippets;
       
-function changeCCB(){
-  if($("#customCB").prop('checked')){
-    $("#customTD").show();
-    setCSS();
-  } else {
-    $("#customTD").hide();  
-    if($("#customCSS").length)
-      $("#customCSS").remove();
-    editor.setOption("theme", "default");
-    editor.setOption("theme", $("#themeselection").val());
-  }
-}
-
-$("#customCB").change(function (){
-  changeCCB();
-  localStorage.setItem('coq-customTheme', $(this).prop("checked"));
-});
-function rgb2hex(rgb) {
-     if (  rgb.search("rgb") == -1 ) {
-          return rgb;
-     } else {
-          rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
-          function hex(x) {
-               return ("0" + parseInt(x).toString(16)).slice(-2);
-          }
-          return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
-     }
-}
-function setCSS(){
-    var str="<style id=\"customCSS\">\n";
-    $('#customTD tr').each(function(){
-      var item = $(this).children('td:nth-child(1)').html();
-      var c = '.cm-'+item;
-      var color = $(this).children('td:nth-child(2)').children('input').val();
-      var prop = 'color';
-      if(item == "background"){
-        c = ".cm-s-"+$("#themeselection").val()+".CodeMirror";
-        prop = "background-color";
+      function changeCCB(){
+        if($("#customCB").prop('checked')){
+          $("#customTD").show();
+          setCSS();
+        } else {
+          $("#customTD").hide();  
+          if($("#customCSS").length)
+            $("#customCSS").remove();
+          editor.setOption("theme", "default");
+          editor.setOption("theme", $("#themeselection").val());
+        }
       }
-      str += c+"{"+prop+": "+color+"}\n";
-    });
-    str+="</style>";
-    if($("#customCSS").length)
-      $("#customCSS").remove();
-    $('head').append(str);
-}
-function initCss() {
-  $('#customTD tr').each(function(){
-    var c = $(this).children('td').html();
-    var className = "cm-"+c;
-    var prop = 'color';
-    if(c == "background"){
-      prop = "background-color";
-      className = "cm-s-"+$("#themeselection").val()+".CodeMirror";
-    }
+      $("#customCB").change(function (){
+        changeCCB();
+        localStorage.setItem('coq-customTheme', $(this).prop("checked"));
+      });
+      function rgb2hex(rgb) {
+           if (  rgb.search("rgb") == -1 ) {
+                return rgb;
+           } else {
+                rgb = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+))?\)$/);
+                function hex(x) {
+                     return ("0" + parseInt(x).toString(16)).slice(-2);
+                }
+                return "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]); 
+           }
+      }
+      function setCSS(){
+          var str="<style id=\"customCSS\">\n";
+          $('#customTD tr').each(function(){
+            var item = $(this).children('td:nth-child(1)').html();
+            var c = '.cm-'+item;
+            var color = $(this).children('td:nth-child(2)').children('input').val();
+            var prop = 'color';
+            if(item == "background"){
+              c = ".cm-s-"+$("#themeselection").val()+".CodeMirror";
+              prop = "background-color";
+            }
+            str += c+"{"+prop+": "+color+"}\n";
+          });
+          str+="</style>";
+          if($("#customCSS").length)
+            $("#customCSS").remove();
+          $('head').append(str);
+      }
+      function initCss() {
+        $('#customTD tr').each(function(){
+          var c = $(this).children('td').html();
+          var className = "cm-"+c;
+          var prop = 'color';
+          if(c == "background"){
+            prop = "background-color";
+            className = "cm-s-"+$("#themeselection").val()+".CodeMirror";
+          }
 
-    var d = document.createElement('input');
-    d.type = "color";
-    var data = localStorage.getItem('coq-'+className);
-    if(data === null || !useCustomCSS)
-      data = rgb2hex($('.'+className).css(prop));
-    d.value = data;
-    $(d).change(function(){
-      console.log(className+" => "+$(this).val());
-      setCSS();
-      localStorage.setItem('coq-'+className,$(this).val());
-    });
-    var t = $("<td></td>").html(d);
-    $(this).append(t);
-  });
-  setCSS();
-}
+          var d = document.createElement('input');
+          d.type = "color";
+          var data = localStorage.getItem('coq-'+className);
+          if(data === null || !useCustomCSS)
+            data = rgb2hex($('.'+className).css(prop));
+          d.value = data;
+          $(d).change(function(){
+            console.log(className+" => "+$(this).val());
+            setCSS();
+            localStorage.setItem('coq-'+className,$(this).val());
+          });
+          var t = $("<td></td>").html(d);
+          $(this).append(t);
+        });
+        setCSS();
+      }
     </script>
     <footer>
       <a href="feedback.php" title="anonymous feedback">Marcel Ullrich</a> - Based on

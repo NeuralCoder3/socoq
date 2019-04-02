@@ -73,3 +73,8 @@ dialog form div {
 #file {
     background-color: lightgray;
 }
+
+.file-upload>input {
+  display: none;
+  width:0px;
+}
